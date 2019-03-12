@@ -8,7 +8,13 @@ Ovládanie: `O` - open shader file, `R` - reload shader program, `E` - edit shad
 
 ## spustenie
 
-Shadertoy spustíme nasledujúcim spôsobom `$ shadertoy [SHADER_FILE]`, kde `SHADER_FILE` je cesta k shadertoy.com kompatibilnému shader programu.
+Shadertoy spustíme nasledujúcim spôsobom 
+
+```
+shadertoy [SHADER_FILE]
+```
+
+, kde `SHADER_FILE` je cesta k shadertoy.com kompatibilnému shader programu.
 
 
 ## kompilácia
