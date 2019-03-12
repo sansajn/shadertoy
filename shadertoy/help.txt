@@ -1,0 +1,7 @@
+shadertoy [shader_program]
+
+{keys}
+O: open shader program
+R: reload shader program
+E: edit shader program
+H: show this help

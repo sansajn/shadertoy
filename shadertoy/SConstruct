@@ -1,0 +1,49 @@
+# dependencies:
+#    libglfw3-dev (3.2.1, ubuntu 18.04)
+#    libgles2-mesa-dev (18.0.5, ubuntu 18.04)
+#    libglm-dev (0.9.9, ubuntu 18.04)
+#    libboost-all-dev (1.65.1, ubuntu 18.04)
+#    libmagick++-dev (6.8.9.9, ubuntu 18.04)
+
+def create_build_environment():
+	env = Environment(
+		CCFLAGS=['--std=c++17', '-O0', '-g', '-Wall', '-Wno-sign-compare'],
+		CPPPATH=['.', 'libs'],
+		CPPDEFINES=['GLFW_INCLUDE_ES2', 'GLM_ENABLE_EXPERIMENTAL', 'GLM_FORCE_RADIANS',
+			'USE_GLFW3', 'USE_IMAGICK',
+			'HAVE_X11'  # sofd
+		],
+		LIBS=['boost_filesystem', 'boost_system'])
+
+	env.ParseConfig('pkg-config --cflags --libs glesv2 x11 glfw3 Magick++ freetype2')
+
+	return env
+
+
+env = create_build_environment()
+
+gles2_objs = [
+	env.Object(['libs/gles2/mesh_gles2.cpp']),
+	env.Object(['libs/gles2/program_gles2.cpp']),
+	env.Object(['libs/gles2/texture_gles2.cpp']),
+	env.Object(['libs/gles2/label_gles2.cpp']),
+]
+
+gl_objs = [
+	env.Object([
+		'libs/gl/window.cpp',
+		'libs/gl/glfw3_user_input.cpp',
+		'libs/gl/glfw3_window.cpp'])
+]
+
+sofd = env.Object(['libs/sofd/libsofd.c'])
+
+env.Program([
+	'shadertoy.cpp',
+	'shadertoy_program.cpp',
+	'file_chooser_dialog.cpp',
+	'clock.cpp',
+	'key_press_event.cpp',
+	gles2_objs, gl_objs, sofd])
+
+env.Program(['test_sofd.cpp', sofd])
