@@ -39,7 +39,7 @@ class shadertoy_app : public ui::glfw_pool_window
 public:
 	using base = ui::glfw_pool_window;
 
-	shadertoy_app();
+	shadertoy_app(string const & shader_fname);
 	void display() override;
 	void input(float dt) override;
 	void update(float dt) override;
@@ -63,7 +63,7 @@ private:
 	universe_clock _t;
 };
 
-shadertoy_app::shadertoy_app()
+shadertoy_app::shadertoy_app(string const & shader_fname)
 	: base{parameters{}.geometry(400, 300)}
 	, _next_pressed{10}
 	, _fps_label_update{true}
@@ -84,7 +84,7 @@ shadertoy_app::shadertoy_app()
 
 	_quad = make_quad_xy<mesh>(vec2{-1,-1}, 2);
 
-	load_program(default_shader_program);
+	load_program(shader_fname);
 
 	_fps_label.init(locate_font(), 12, vec2{width(), height()}, vec2{2,2});
 
@@ -258,7 +258,7 @@ string locate_font()
 
 int main(int argc, char * argv[])
 {
-	shadertoy_app app;
+	shadertoy_app app{argc > 1 ? argv[1] : default_shader_program};
 	app.start();
 	return 0;
 }
