@@ -92,7 +92,7 @@ label_holder<GlmT> with_label(std::string const & label, GlmT const & value)
 }
 
 shadertoy_app::shadertoy_app(string const & shader_fname)
-	 : base{parameters{}.geometry(800, 800)}
+	 : base{parameters{}.geometry(400, 300)}
 	, _next_pressed{10}
 	, _fps_label_update{true}
 	, _paused{false}
