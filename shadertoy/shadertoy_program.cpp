@@ -63,8 +63,12 @@ void shadertoy_program::use()
 void shadertoy_program::update(float t, glm::vec2 const & resolution, int frame)
 {
 	assert(_prog.used());
-	*_time_u = t;
-	*_resolution_u = vec3{resolution, 1.0f};
+
+	if (_time_u)
+		*_time_u = t;
+
+	if (_resolution_u)
+        *_resolution_u = vec3{resolution, resolution.x/resolution.y};
 
 	if (_frame_u)
 		*_frame_u = frame;

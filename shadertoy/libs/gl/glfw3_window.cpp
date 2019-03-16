@@ -80,6 +80,13 @@ void glfw3_layer::name(std::string const & s)
 	glfwSetWindowTitle(native_window(), s.c_str());
 }
 
+ivec2 glfw3_layer::framebuffer_size() const
+{
+	ivec2 result;
+	glfwGetFramebufferSize(native_window(), &result.x, &result.y);
+	return result;
+}
+
 
 GLFWwindow * glfw3_layer::native_window() const
 {

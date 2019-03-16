@@ -5,6 +5,7 @@
 #include <boost/filesystem/path.hpp>
 #include <boost/filesystem/operations.hpp>
 #include <glm/vec2.hpp>
+//#include "geometry/glmprint.hpp"
 #include "gl/glfw3_window.hpp"
 #include "gl/shapes.hpp"
 #include "gles2/mesh_gles2.hpp"
@@ -63,8 +64,35 @@ private:
 	universe_clock _t;
 };
 
+template <typename GlmT>
+struct label_holder
+{
+	label_holder(std::string const & label, GlmT const & value)
+		: value{value}, label{label}
+	{}
+
+	GlmT const & value;
+	std::string const & label;
+};
+
+std::ostream & operator<<(std::ostream & out, label_holder<glm::ivec2> const & x)
+{
+	if (!x.label.empty())
+		out << x.label << "=";
+
+	out << "(" << x.value.x << ", " << x.value.y << ")";
+
+	return out;
+}
+
+template <typename GlmT>
+label_holder<GlmT> with_label(std::string const & label, GlmT const & value)
+{
+	return label_holder<GlmT>{label, value};
+}
+
 shadertoy_app::shadertoy_app(string const & shader_fname)
-	: base{parameters{}.geometry(400, 300)}
+	 : base{parameters{}.geometry(800, 800)}
 	, _next_pressed{10}
 	, _fps_label_update{true}
 	, _paused{false}
@@ -89,6 +117,9 @@ shadertoy_app::shadertoy_app(string const & shader_fname)
 	_fps_label.init(locate_font(), 12, vec2{width(), height()}, vec2{2,2});
 
 	glClearColor(0,0,0,1);
+
+	cout << with_label("framebuffer-size", framebuffer_size()) << std::endl;
+//	print_vector(framebuffer_size());// << std::endl;
 }
 
 void shadertoy_app::update(float dt)
@@ -183,7 +214,7 @@ void shadertoy_app::display()
 	static int __frame = 1;
 
 	_prog.use();
-	_prog.update(t, vec2(width(), height()), __frame);
+	_prog.update(t, vec2(framebuffer_size()), __frame);
 
 	if (!_paused)
 		++__frame;
