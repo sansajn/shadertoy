@@ -39,4 +39,5 @@ private:
 	ui::label _fps_label, _time_label;
 	bool _paused;  // step mode
 	universe_clock _t;
+	int _step = 60;  // in fps
 };

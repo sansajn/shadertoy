@@ -67,8 +67,6 @@ shadertoy_app::shadertoy_app(ivec2 const & size, string const & shader_fname)
 	_fps_label.init(locate_font(), 12, vec2{width(), height()}, vec2{2,2});
 	_time_label.init(locate_font(), 12, vec2{width(), height()}, vec2{width() - 100, 5});
 
-	_time_label.text("[t=31.26s]");
-
 	glClearColor(0,0,0,1);
 
 	cout << with_label("framebuffer-size", framebuffer_size()) << std::endl;
@@ -122,11 +120,11 @@ void shadertoy_app::update(float dt)
 	if (_next_pressed)
 	{
 		float t_prev = _t.now();
-		float t = _t.next(0.1f);
+		float t = _t.next(1.0 / _step);
 		cout << "t=" << t_prev << "s -> " << t << "s" << std::endl;
 	}
 
-	float const UPDATE_DELAY = 0.25f;
+	float const UPDATE_DELAY = 0.5f;
 
 	_fps_label_update.update(dt);
 
@@ -139,7 +137,17 @@ void shadertoy_app::update(float dt)
 	_time_label_update.update(dt);
 	if (_time_label_update.get())
 	{
-		_time_label.text(string{"t="} + to_string(_t.now()) + "s");
+		if (_paused)
+		{
+			_time_label.text("P (1/" + to_string(_step) + "), t=" + to_string(_t.now()) + "s");
+			_time_label.position(vec2{width() - 180, 2});
+		}
+		else
+		{
+			_time_label.text("t=" + to_string(_t.now()) + "s");
+			_time_label.position(vec2{width() - 100, 5});
+		}
+
 		_time_label_update = delayed_bool{false, true, UPDATE_DELAY};
 	}
 }
