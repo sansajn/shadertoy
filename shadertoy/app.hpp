@@ -31,12 +31,12 @@ private:
 	key_press_event _open_pressed, _edit_pressed, _reload_pressed,
 		_help_pressed, _pause_pressed, _next_pressed;
 
-	delayed_bool _fps_label_update;
+	delayed_bool _fps_label_update, _time_label_update;
 
 	std::string _program_fname;
 	mesh _quad;
 	shadertoy_program _prog;
-	ui::label _fps_label;
+	ui::label _fps_label, _time_label;
 	bool _paused;  // step mode
 	universe_clock _t;
 };

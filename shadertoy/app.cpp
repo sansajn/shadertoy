@@ -44,6 +44,7 @@ shadertoy_app::shadertoy_app(ivec2 const & size, string const & shader_fname)
 	 : base{parameters{}.geometry(size[0], size[1])}
 	, _next_pressed{10}
 	, _fps_label_update{true}
+	, _time_label_update{true}
 	, _paused{false}
 {
 	// dump help
@@ -64,6 +65,9 @@ shadertoy_app::shadertoy_app(ivec2 const & size, string const & shader_fname)
 	load_program(shader_fname);
 
 	_fps_label.init(locate_font(), 12, vec2{width(), height()}, vec2{2,2});
+	_time_label.init(locate_font(), 12, vec2{width(), height()}, vec2{width() - 100, 5});
+
+	_time_label.text("[t=31.26s]");
 
 	glClearColor(0,0,0,1);
 
@@ -131,6 +135,13 @@ void shadertoy_app::update(float dt)
 		_fps_label.text(string("fps: ") + to_string(fps()));
 		_fps_label_update = delayed_bool{false, true, UPDATE_DELAY};
 	}
+
+	_time_label_update.update(dt);
+	if (_time_label_update.get())
+	{
+		_time_label.text(string{"t="} + to_string(_t.now()) + "s");
+		_time_label_update = delayed_bool{false, true, UPDATE_DELAY};
+	}
 }
 
 void shadertoy_app::input(float dt)
@@ -173,6 +184,7 @@ void shadertoy_app::display()
 	// controls
 	glDisable(GL_DEPTH_TEST);
 	_fps_label.render();
+	_time_label.render();
 
 	base::display();
 }
@@ -204,5 +216,6 @@ void shadertoy_app::reshape(int w, int h)
 {
 	assert(w > 0 && h > 0 && "invalid screen geometry");
 	_fps_label.reshape(vec2{w, h});
+	_time_label.reshape(vec2{w, h});
 	base::reshape(w, h);
 }
