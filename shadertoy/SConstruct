@@ -46,6 +46,7 @@ env.Program([
 	'clock.cpp',
 	'key_press_event.cpp',
 	'utility.cpp',
+	'project_file.cpp',
 	gles2_objs, gl_objs, sofd])
 
 env.Program(['test_sofd.cpp', sofd])

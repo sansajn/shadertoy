@@ -1,13 +1,16 @@
 #include <iostream>
 #include <boost/filesystem/path.hpp>
+#include <boost/algorithm/string/predicate.hpp>
 #include "gl/shapes.hpp"
 #include "utility.hpp"
 #include "file_chooser_dialog.hpp"
+#include "project_file.hpp"
 #include "app.hpp"
 
 using std::string;
 using std::to_string;
 using std::cout;
+using boost::algorithm::ends_with;
 using glm::vec2;
 using glm::ivec2;
 using gl::make_quad_xy;
@@ -202,7 +205,16 @@ void shadertoy_app::edit_program()
 
 bool shadertoy_app::load_program(string const & fname)
 {
-	_program_fname = fname;
+	if (ends_with(fname, ".stoy"))  // project file
+	{
+		io::project_file prj;
+		if (!prj.load(fname))
+			return false;
+		_program_fname = prj.shader_program();
+	}
+	else  // shader
+		_program_fname = fname;
+
 	if (!_prog.load(_program_fname))
 		return false;
 
