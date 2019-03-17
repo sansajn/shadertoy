@@ -13,7 +13,7 @@ def create_build_environment():
 			'USE_GLFW3', 'USE_IMAGICK',
 			'HAVE_X11'  # sofd
 		],
-		LIBS=['boost_filesystem', 'boost_system'])
+		LIBS=['boost_filesystem', 'boost_system', 'boost_program_options'])
 
 	env.ParseConfig('pkg-config --cflags --libs glesv2 x11 glfw3 Magick++ freetype2')
 
@@ -40,10 +40,12 @@ sofd = env.Object(['libs/sofd/libsofd.c'])
 
 env.Program([
 	'shadertoy.cpp',
+	'app.cpp',
 	'shadertoy_program.cpp',
 	'file_chooser_dialog.cpp',
 	'clock.cpp',
 	'key_press_event.cpp',
+	'utility.cpp',
 	gles2_objs, gl_objs, sofd])
 
 env.Program(['test_sofd.cpp', sofd])
