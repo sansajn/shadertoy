@@ -18,7 +18,8 @@ int main(int argc, char * argv[])
 		desc.add_options()
 			("help", "produce help messages")
 			("size", po::value<string>(), "set window size")
-			("shader", po::value<string>(), "load program shader");
+			("shader", po::value<string>(), "load program shader")
+			("compile", "compile program shader only");
 
 	po::positional_options_description pos_desc;
 	pos_desc.add("shader", 1);
@@ -35,8 +36,11 @@ int main(int argc, char * argv[])
 
 	string shader_program = vm.count("shader") ? vm["shader"].as<string>() : default_shader_program;
 	ivec2 size = parse_size(vm.count("size") ? vm["size"].as<string>() : "400x300", ivec2{400, 300});
+	bool compile_only = vm.count("compile") ? true : false;
+
 	shadertoy_app app{size, shader_program};
-	app.start();
+	if (!compile_only)
+		app.start();
 
 	return 0;
 }
