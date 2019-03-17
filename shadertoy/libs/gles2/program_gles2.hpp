@@ -196,6 +196,8 @@ template <typename T>
 void program::uniform_variable(std::string const & name, T const & v)
 {
 	auto u = uniform_variable(name);
+	if (!u)
+		throw std::runtime_error{"error: unknown uniform '" + name + "'"};
 	*u = v;
 }
 

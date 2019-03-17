@@ -28,11 +28,24 @@ int main(int argc, char * argv[])
 	po::store(po::command_line_parser(argc, argv).options(desc).positional(pos_desc).run(), vm);
 	po::notify(vm);
 
+	// dump help
+	cout
+		<< "shadertoy [options][shader_program]\n"
+		<< "\n"
+		<< "{keys}\n"
+		<< "O: open shadertoy program or project file (*.stoy)\n"
+		<< "R: reload shader program\n"
+		<< "E: edit shader program\n"
+		<< "A: add texture\n"
+		<< "P: pause/play\n"
+		<< ".: next step\n"
+		<< "H: show this help\n"
+		<< std::endl;
+
+	cout << desc << std::endl;
+
 	if (vm.count("help"))
-	{
-		cout << desc << std::endl;
 		return 1;
-	}
 
 	string shader_program = vm.count("shader") ? vm["shader"].as<string>() : default_shader_program;
 	ivec2 size = parse_size(vm.count("size") ? vm["size"].as<string>() : "400x300", ivec2{400, 300});

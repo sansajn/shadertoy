@@ -23,10 +23,15 @@ def create_build_environment():
 env = create_build_environment()
 
 gles2_objs = [
-	env.Object(['libs/gles2/mesh_gles2.cpp']),
-	env.Object(['libs/gles2/program_gles2.cpp']),
-	env.Object(['libs/gles2/texture_gles2.cpp']),
-	env.Object(['libs/gles2/label_gles2.cpp']),
+	'libs/gles2/' + f for f in [
+		'mesh_gles2.cpp',
+		'program_gles2.cpp',
+		'texture_gles2.cpp',
+		'label_gles2.cpp',
+		'model_gles2.cpp',
+		'property.cpp',
+		'texture_loader_gles2.cpp'
+	]
 ]
 
 gl_objs = [

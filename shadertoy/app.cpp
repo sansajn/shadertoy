@@ -2,6 +2,8 @@
 #include <boost/filesystem/path.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 #include "gl/shapes.hpp"
+#include "gles2/texture_loader_gles2.hpp"
+#include "gles2/property.hpp"
 #include "utility.hpp"
 #include "file_chooser_dialog.hpp"
 #include "project_file.hpp"
@@ -10,10 +12,14 @@
 using std::string;
 using std::to_string;
 using std::cout;
+using std::shared_ptr;
 using boost::algorithm::ends_with;
 using glm::vec2;
 using glm::ivec2;
 using gl::make_quad_xy;
+using gles2::texture2d;
+using gles2::texture_property;
+using gles2::texture_from_file;
 namespace fs = boost::filesystem;
 
 template <typename GlmT>
@@ -50,19 +56,6 @@ shadertoy_app::shadertoy_app(ivec2 const & size, string const & shader_fname)
 	, _time_label_update{true}
 	, _paused{false}
 {
-	// dump help
-	cout
-		<< "shadertoy [shader_program]\n"
-		<< "\n"
-		<< "{keys}\n"
-		<< "O: open shader program\n"
-		<< "R: reload shader program\n"
-		<< "E: edit shader program\n"
-		<< "P: pause/play\n"
-		<< ".: next step\n"
-		<< "H: show this help\n"
-		<< std::endl;
-
 	_quad = make_quad_xy<mesh>(vec2{-1,-1}, 2);
 
 	load_program(shader_fname);
@@ -211,12 +204,24 @@ bool shadertoy_app::load_program(string const & fname)
 		if (!prj.load(fname))
 			return false;
 		_program_fname = prj.shader_program();
+
+		if (!_prog.load(_program_fname))
+			return false;
+
+		// load textures there ...
+		for (string const & ftex : prj.program_textures())
+		{
+			shared_ptr<texture2d> tex{new texture2d{texture_from_file(ftex)}};
+			_prog.attach(tex);
+		}
 	}
 	else  // shader
+	{
 		_program_fname = fname;
 
-	if (!_prog.load(_program_fname))
-		return false;
+		if (!_prog.load(_program_fname))
+			return false;
+	}
 
 	_prog.use();
 	auto fn = fs::path{_program_fname}.filename();

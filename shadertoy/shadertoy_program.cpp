@@ -1,11 +1,15 @@
+#include <iostream>
 #include <glm/vec3.hpp>
 #include <glm/vec4.hpp>
 #include "shadertoy_program.hpp"
 
 using std::string;
+using std::to_string;
+using std::shared_ptr;
 using glm::vec2;
 using glm::vec3;
 using glm::vec4;
+using gles2::texture_property;
 
 shadertoy_program::shadertoy_program()
 {}
@@ -30,6 +34,10 @@ bool shadertoy_program::load(string const & fname)
 		uniform vec3 iResolution;
 		uniform int iFrame;
 		uniform vec4 iMouse;
+		uniform sampler2D iChannel0;
+		uniform sampler2D iChannel1;
+		uniform sampler2D iChannel2;
+		uniform sampler2D iChannel3;
 	)";
 
 	string mainImage = gles2::shader::read_file(fname);
@@ -51,6 +59,13 @@ bool shadertoy_program::load(string const & fname)
 	return true;
 }
 
+bool shadertoy_program::attach(shared_ptr<gles2::texture2d> tex)
+{
+	size_t idx = _textures.size();
+	_textures.emplace_back(tex, "iChannel" + to_string(idx), idx);
+	return true;
+}
+
 void shadertoy_program::use()
 {
 	_prog.use();
@@ -58,6 +73,15 @@ void shadertoy_program::use()
 	_resolution_u = _prog.uniform_variable("iResolution");
 	_frame_u = _prog.uniform_variable("iFrame");
 	_mouse_u = _prog.uniform_variable("iMouse");
+
+	// iChannelN
+	for (auto & prop : _textures)
+	{
+		if (_prog.uniform_variable(prop._uname))
+			prop.bind(_prog);
+		else
+			std::cerr << "warning: uniform variable '" << prop._uname << "' not used" << std::endl;
+	}
 }
 
 void shadertoy_program::update(float t, glm::vec2 const & resolution, int frame)
