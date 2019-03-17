@@ -1,8 +1,10 @@
+#include <iostream>
 #include <boost/program_options.hpp>
 #include <glm/vec2.hpp>
 #include "utility.hpp"
 #include "app.hpp"
 
+using std::cout;
 using std::string;
 using glm::ivec2;
 namespace po = boost::program_options;
@@ -12,7 +14,7 @@ string const default_shader_program = "hello.glsl";
 
 int main(int argc, char * argv[])
 {
-	po::options_description desc{"Allowed options"};
+	po::options_description desc{"shadertoy options"};
 		desc.add_options()
 			("help", "produce help messages")
 			("size", po::value<string>(), "set window size")
@@ -24,6 +26,12 @@ int main(int argc, char * argv[])
 	po::variables_map vm;
 	po::store(po::command_line_parser(argc, argv).options(desc).positional(pos_desc).run(), vm);
 	po::notify(vm);
+
+	if (vm.count("help"))
+	{
+		cout << desc << std::endl;
+		return 1;
+	}
 
 	string shader_program = vm.count("shader") ? vm["shader"].as<string>() : default_shader_program;
 	ivec2 size = parse_size(vm.count("size") ? vm["size"].as<string>() : "400x300", ivec2{400, 300});
