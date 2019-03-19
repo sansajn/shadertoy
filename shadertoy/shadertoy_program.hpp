@@ -18,7 +18,8 @@ public:
 	void update(
 		float t,
 		glm::vec2 const & resolution,
-		int frame
+		int frame,
+		glm::vec4 const & mouse
 	);
 
 private:

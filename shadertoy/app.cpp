@@ -1,6 +1,8 @@
 #include <iostream>
 #include <boost/filesystem/path.hpp>
 #include <boost/algorithm/string/predicate.hpp>
+#include <glm/vec2.hpp>
+#include <glm/vec4.hpp>
 #include "gl/shapes.hpp"
 #include "gles2/texture_loader_gles2.hpp"
 #include "gles2/property.hpp"
@@ -16,6 +18,7 @@ using std::shared_ptr;
 using boost::algorithm::ends_with;
 using glm::vec2;
 using glm::ivec2;
+using glm::vec4;
 using gl::make_quad_xy;
 using gles2::texture2d;
 using gles2::texture_property;
@@ -160,6 +163,16 @@ void shadertoy_app::input(float dt)
 	_help_pressed.update(dt, in().key('H'));
 	_pause_pressed.update(dt, in().key('P'));
 	_next_pressed.update(dt, in().key('.'));
+
+	if (in().mouse(ui::event_handler::button::left))
+	{
+		if (_click_position.x + _click_position.y == 0.0)
+			_click_position = in().mouse_position();
+
+		_mouse_position = in().mouse_position();
+	}
+	else
+		_click_position = _mouse_position = vec2{0, 0};
 }
 
 void shadertoy_app::display()
@@ -178,7 +191,12 @@ void shadertoy_app::display()
 	static int __frame = 1;
 
 	_prog.use();
-	_prog.update(t, vec2(framebuffer_size()), __frame);
+
+	_prog.update(
+		t,
+		vec2(framebuffer_size()),
+		__frame,
+		vec4{_mouse_position, _click_position});
 
 	if (!_paused)
 		++__frame;

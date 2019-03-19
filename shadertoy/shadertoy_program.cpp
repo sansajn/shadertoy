@@ -84,7 +84,7 @@ void shadertoy_program::use()
 	}
 }
 
-void shadertoy_program::update(float t, glm::vec2 const & resolution, int frame)
+void shadertoy_program::update(float t, glm::vec2 const & resolution, int frame, glm::vec4 const & mouse)
 {
 	assert(_prog.used());
 
@@ -98,5 +98,5 @@ void shadertoy_program::update(float t, glm::vec2 const & resolution, int frame)
 		*_frame_u = frame;
 
 	if (_mouse_u)
-		*_mouse_u = vec4{0, 0, 1.0f, 1.0f};
+		*_mouse_u = mouse;
 }

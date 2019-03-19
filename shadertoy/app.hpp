@@ -40,4 +40,5 @@ private:
 	bool _paused;  // step mode
 	universe_clock _t;
 	int _step = 60;  // in fps
+	glm::vec2 _click_position, _mouse_position;
 };
