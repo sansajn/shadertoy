@@ -1,0 +1,6 @@
+env = Environment(CCFLAGS=['-std=c++17', '-Wall', '-O0', '-g'])
+
+file_view = env.Object(['read_file.cpp', 'read_lines.cpp'])
+
+env.Program(['test_read_file.cpp', file_view])
+env.Program(['test_read_lines.cpp', file_view])

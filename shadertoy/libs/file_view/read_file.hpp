@@ -1,11 +1,9 @@
 #pragma once
 #include <string>
-#include <vector>
 
 namespace io {
 
+//! read \c fname file into memory at once
 std::string read_file(std::string const & fname);
-
-// read_lines(fname)
 
 }  // io

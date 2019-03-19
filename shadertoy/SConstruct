@@ -42,6 +42,7 @@ gl_objs = [
 ]
 
 sofd = env.Object(['libs/sofd/libsofd.c'])
+file_view = env.Object(Glob('libs/file_view/*.cpp'))
 
 env.Program([
 	'shadertoy.cpp',
@@ -52,6 +53,6 @@ env.Program([
 	'key_press_event.cpp',
 	'utility.cpp',
 	'project_file.cpp',
-	gles2_objs, gl_objs, sofd])
+	gles2_objs, gl_objs, sofd, file_view])
 
 env.Program(['test_sofd.cpp', sofd])

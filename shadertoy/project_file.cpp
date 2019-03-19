@@ -1,6 +1,7 @@
 #include <fstream>
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/trim.hpp>
+#include "file_view/read_lines.hpp"
 #include "project_file.hpp"
 
 namespace io {
@@ -10,7 +11,7 @@ using std::vector;
 using std::ifstream;
 using boost::algorithm::starts_with;
 using boost::algorithm::trim;
-using boost::algorithm::trim_left;
+using boost::algorithm::trim_left_copy;
 using boost::algorithm::trim_right;
 
 project_file::project_file()
@@ -18,23 +19,21 @@ project_file::project_file()
 
 bool project_file::load(std::string const & fname)
 {
-	ifstream fin{fname};
-	if (!fin.is_open())
-		return false;
-
-	string line;
-	while (getline(fin, line))
+	for (string const & line : io::read_lines(fname))
 	{
-		trim_left(line);
-		if (line.empty() || starts_with(line, "#"))  // ignore line
+		if (line.empty())
 			continue;
 
-		trim_right(line);
+		string resource = trim_left_copy(line);
+		if (resource.empty() || starts_with(resource, "#"))  // ignore line
+			continue;
+
+		trim_right(resource);
 
 		if (_prog.empty())
 			_prog = line;
 		else
-			_texs.push_back(line);
+			_texs.push_back(resource);
 	}
 
 	return !_prog.empty();
