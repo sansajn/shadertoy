@@ -66,6 +66,15 @@ shadertoy_app::shadertoy_app(ivec2 const & size, string const & shader_fname)
 	_fps_label.init(locate_font(), 12, vec2{width(), height()}, vec2{2,2});
 	_time_label.init(locate_font(), 12, vec2{width(), height()}, vec2{width() - 100, 5});
 
+	for (size_t i = 0; i < _textures.size(); ++i)
+	{
+		vec2 pos = vec2{width() - (i+1)*(64+10), height() - 64 - 10};
+		shared_ptr<ui::texture_view> tex{new ui::texture_view{pos, vec2{64, 64}}};
+		tex->reshape(vec2{width(), height()});
+		tex->load(_textures[i]);
+		_texture_panel.push_back(tex);
+	}
+
 	glClearColor(0,0,0,1);
 
 	cout << with_label("framebuffer-size", framebuffer_size()) << std::endl;
@@ -207,6 +216,8 @@ void shadertoy_app::display()
 	glDisable(GL_DEPTH_TEST);
 	_fps_label.render();
 	_time_label.render();
+	for (auto const & v : _texture_panel)
+		v->render();
 
 	base::display();
 }
@@ -229,8 +240,10 @@ bool shadertoy_app::load_program(string const & fname)
 		// load textures there ...
 		for (string const & ftex : prj.program_textures())
 		{
-			shared_ptr<texture2d> tex{new texture2d{texture_from_file(ftex)}};
-			_prog.attach(tex);
+			_textures.push_back(
+				shared_ptr<texture2d>{new texture2d{texture_from_file(ftex)}});
+
+			_prog.attach(_textures.back());
 		}
 	}
 	else  // shader
@@ -258,7 +271,10 @@ bool shadertoy_app::reload_program()
 void shadertoy_app::reshape(int w, int h)
 {
 	assert(w > 0 && h > 0 && "invalid screen geometry");
-	_fps_label.reshape(vec2{w, h});
-	_time_label.reshape(vec2{w, h});
+	vec2 size{w, h};
+	_fps_label.reshape(size);
+	_time_label.reshape(size);
+	for (auto const & v : _texture_panel)
+		v->reshape(size);
 	base::reshape(w, h);
 }

@@ -69,10 +69,11 @@ bool shadertoy_program::attach(shared_ptr<gles2::texture2d> tex)
 void shadertoy_program::use()
 {
 	_prog.use();
-	_time_u = _prog.uniform_variable("iTime");
-	_resolution_u = _prog.uniform_variable("iResolution");
-	_frame_u = _prog.uniform_variable("iFrame");
-	_mouse_u = _prog.uniform_variable("iMouse");
+
+	_time = float_uniform{_prog.uniform_variable("iTime")};
+	_resolution = vec3_uniform{_prog.uniform_variable("iResolution")};
+	_frame = int_uniform{_prog.uniform_variable("iFrame")};
+	_mouse = vec4_uniform{_prog.uniform_variable("iMouse")};
 
 	// iChannelN
 	for (auto & prop : _textures)
@@ -88,15 +89,8 @@ void shadertoy_program::update(float t, glm::vec2 const & resolution, int frame,
 {
 	assert(_prog.used());
 
-	if (_time_u)
-		*_time_u = t;
-
-	if (_resolution_u)
-        *_resolution_u = vec3{resolution, resolution.x/resolution.y};
-
-	if (_frame_u)
-		*_frame_u = frame;
-
-	if (_mouse_u)
-		*_mouse_u = mouse;
+	_time = t;
+	_resolution = vec3{resolution, resolution.x/resolution.y};
+	_frame = frame;
+	_mouse = mouse;
 }

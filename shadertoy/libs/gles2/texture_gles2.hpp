@@ -89,7 +89,7 @@ private:
 class texture2d : public texture
 {
 public:
-	texture2d() {}
+	texture2d();
 	texture2d(unsigned width, unsigned height, pixel_format pfmt, pixel_type type, parameters const & params = parameters()) : texture2d(width, height, pfmt, type, nullptr, params) {}
 	texture2d(unsigned width, unsigned height, pixel_format pfmt, pixel_type type, void const * pixels, parameters const & params = parameters());
 	texture2d(unsigned tid, unsigned width, unsigned height, pixel_format pfmt, pixel_type type);

@@ -1,10 +1,13 @@
 #pragma once
 #include <string>
 #include <chrono>
+#include <vector>
 #include <glm/vec2.hpp>
 #include "gl/glfw3_window.hpp"
 #include "gles2/mesh_gles2.hpp"
 #include "gles2/label_gles2.hpp"
+#include "gles2/texture_gles2.hpp"
+#include "gles2/texture_view.hpp"
 #include "shadertoy_program.hpp"
 #include "clock.hpp"
 #include "delayed_value.hpp"
@@ -37,8 +40,12 @@ private:
 	mesh _quad;
 	shadertoy_program _prog;
 	ui::label _fps_label, _time_label;
+	std::vector<std::shared_ptr<ui::texture_view>> _texture_panel;
 	bool _paused;  // step mode
 	universe_clock _t;
 	int _step = 60;  // in fps
 	glm::vec2 _click_position, _mouse_position;
+
+	// resources
+	std::vector<std::shared_ptr<gles2::texture2d>> _textures;
 };

@@ -109,6 +109,10 @@ void texture::init(parameters const & params)
 }
 
 
+texture2d::texture2d()
+	: _w{0}, _h{0}
+{}
+
 texture2d::texture2d(unsigned width, unsigned height, pixel_format pfmt, pixel_type type, void const * pixels, parameters const & params)
 	: texture{GL_TEXTURE_2D, params}
 {
