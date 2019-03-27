@@ -63,8 +63,11 @@ shadertoy_app::shadertoy_app(ivec2 const & size, string const & shader_fname)
 
 	load_program(shader_fname);
 
-	_fps_label.init(locate_font(), 12, vec2{width(), height()}, vec2{2,2});
-	_time_label.init(locate_font(), 12, vec2{width(), height()}, vec2{width() - 100, 5});
+	_fps_label.reset(new ui::label);
+	_fps_label->init(locate_font(), 12, vec2{width(), height()}, vec2{2,2});
+
+	_time_label.reset(new ui::label);
+	_time_label->init(locate_font(), 12, vec2{width(), height()}, vec2{width() - 100, 5});
 
 	for (size_t i = 0; i < _textures.size(); ++i)
 	{
@@ -80,9 +83,8 @@ shadertoy_app::shadertoy_app(ivec2 const & size, string const & shader_fname)
 	cout << with_label("framebuffer-size", framebuffer_size()) << std::endl;
 //	print_vector(framebuffer_size());// << std::endl;
 
-//	add_view(_fps_label);
-//	add_view(_time_label);
-
+	add_view(_fps_label);
+	add_view(_time_label);
 	for (auto const & v : _texture_panel)
 		add_view(v);
 }
@@ -144,7 +146,7 @@ void shadertoy_app::update(float dt)
 
 	if (_fps_label_update.get())
 	{
-		_fps_label.text(string("fps: ") + to_string(fps()));
+		_fps_label->text(string("fps: ") + to_string(fps()));
 		_fps_label_update = delayed_bool{false, true, UPDATE_DELAY};
 	}
 
@@ -153,13 +155,13 @@ void shadertoy_app::update(float dt)
 	{
 		if (_paused)
 		{
-			_time_label.text("P (1/" + to_string(_step) + "), t=" + to_string(_t.now()) + "s");
-			_time_label.position(vec2{width() - 180, 2});
+			_time_label->text("P (1/" + to_string(_step) + "), t=" + to_string(_t.now()) + "s");
+			_time_label->position(vec2{width() - 180, 2});
 		}
 		else
 		{
-			_time_label.text("t=" + to_string(_t.now()) + "s");
-			_time_label.position(vec2{width() - 100, 5});
+			_time_label->text("t=" + to_string(_t.now()) + "s");
+			_time_label->position(vec2{width() - 100, 5});
 		}
 
 		_time_label_update = delayed_bool{false, true, UPDATE_DELAY};
@@ -218,11 +220,6 @@ void shadertoy_app::display()
 
 	_quad.render();
 
-	// controls
-	glDisable(GL_DEPTH_TEST);
-	_fps_label.render();
-	_time_label.render();
-
 	base::display();
 }
 
@@ -276,7 +273,7 @@ void shadertoy_app::reshape(int w, int h)
 {
 	assert(w > 0 && h > 0 && "invalid screen geometry");
 	vec2 size{w, h};
-	_fps_label.reshape(size);
-	_time_label.reshape(size);
+	_fps_label->reshape(size);
+	_time_label->reshape(size);
 	base::reshape(w, h);
 }

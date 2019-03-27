@@ -40,7 +40,7 @@ private:
 	std::string _program_fname;
 	mesh _quad;
 	shadertoy_program _prog;
-	ui::label _fps_label, _time_label;
+	std::shared_ptr<ui::label> _fps_label, _time_label;
 	std::vector<std::shared_ptr<ui::texture_view>> _texture_panel;
 	bool _paused;  // step mode
 	universe_clock _t;
