@@ -31,7 +31,8 @@ gles2_objs = [
 		'model_gles2.cpp',
 		'property.cpp',
 		'texture_loader_gles2.cpp',
-		'texture_view.cpp'
+		'texture_view.cpp',
+		'application.cpp'
 	]
 ]
 

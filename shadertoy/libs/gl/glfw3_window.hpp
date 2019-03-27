@@ -19,7 +19,7 @@ public:
 	user_input & in();
 	user_input const & in() const;
 	void name(std::string const & s) override;
-    glm::ivec2 framebuffer_size() const override;
+	glm::ivec2 framebuffer_size() const override;
 	GLFWwindow * native_window() const;
 
 private:

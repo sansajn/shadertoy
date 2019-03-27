@@ -8,6 +8,7 @@
 #include FT_FREETYPE_H
 #include "gles2/program_gles2.hpp"
 #include "gles2/texture_gles2.hpp"
+#include "gles2/view.hpp"
 
 namespace ui {
 
@@ -28,7 +29,7 @@ lbl.text("hello!");
 // ...
 lbl.render();
 \endcode */
-class label
+class label : public view
 {
 public:
 	label(unsigned dpi = 96);

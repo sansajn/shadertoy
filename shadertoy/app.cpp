@@ -79,6 +79,12 @@ shadertoy_app::shadertoy_app(ivec2 const & size, string const & shader_fname)
 
 	cout << with_label("framebuffer-size", framebuffer_size()) << std::endl;
 //	print_vector(framebuffer_size());// << std::endl;
+
+//	add_view(_fps_label);
+//	add_view(_time_label);
+
+	for (auto const & v : _texture_panel)
+		add_view(v);
 }
 
 void shadertoy_app::update(float dt)
@@ -216,8 +222,6 @@ void shadertoy_app::display()
 	glDisable(GL_DEPTH_TEST);
 	_fps_label.render();
 	_time_label.render();
-	for (auto const & v : _texture_panel)
-		v->render();
 
 	base::display();
 }
@@ -274,7 +278,5 @@ void shadertoy_app::reshape(int w, int h)
 	vec2 size{w, h};
 	_fps_label.reshape(size);
 	_time_label.reshape(size);
-	for (auto const & v : _texture_panel)
-		v->reshape(size);
 	base::reshape(w, h);
 }

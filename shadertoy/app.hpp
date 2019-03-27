@@ -8,6 +8,7 @@
 #include "gles2/label_gles2.hpp"
 #include "gles2/texture_gles2.hpp"
 #include "gles2/texture_view.hpp"
+#include "gles2/application.hpp"
 #include "shadertoy_program.hpp"
 #include "clock.hpp"
 #include "delayed_value.hpp"
@@ -15,10 +16,10 @@
 
 using mesh = gles2::mesh;
 
-class shadertoy_app : public ui::glfw_pool_window
+class shadertoy_app : public ui::application
 {
 public:
-	using base = ui::glfw_pool_window;
+	using base = ui::application;
 
 	shadertoy_app(glm::ivec2 const & size, std::string const & shader_fname);
 	void display() override;
