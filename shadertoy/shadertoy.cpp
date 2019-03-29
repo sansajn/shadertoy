@@ -36,7 +36,6 @@ int main(int argc, char * argv[])
 		<< "O: open shadertoy program or project file (*.stoy)\n"
 		<< "R: reload shader program\n"
 		<< "E: edit shader program\n"
-		<< "A: add texture\n"
 		<< "P: pause/play\n"
 		<< ".: next step\n"
 		<< "H: show this help\n"

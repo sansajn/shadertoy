@@ -1,8 +1,12 @@
+#include <algorithm>
 #include "application.hpp"
 
 namespace ui {
 
 using std::shared_ptr;
+using std::find;
+using std::begin;
+using std::end;
 using glm::vec2;
 
 application::application(window_type::parameters const & params)
@@ -16,6 +20,14 @@ void application::add_view(shared_ptr<ui::view> v)
 {
 	_views.push_back(v);
 }
+
+void application::remove_view(std::shared_ptr<ui::view> v)
+{
+	_views.erase(find(begin(_views), end(_views), v));
+}
+
+void application::clear_views()
+{}
 
 void application::display()
 {

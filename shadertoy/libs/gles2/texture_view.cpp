@@ -56,6 +56,9 @@ texture_view::texture_view(vec2 const & pos, vec2 const & size)
 		"ortho_texture_gles2_shader",	detail::ortho_texture_gles2_shader_source);
 }
 
+texture_view::~texture_view()
+{}
+
 void texture_view::load(string const & fname)
 {
 	_texture = ui_resource_loader().from_file<texture2d>(fname);

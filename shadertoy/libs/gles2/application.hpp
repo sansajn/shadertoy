@@ -16,6 +16,8 @@ public:
 	virtual void display();
 	virtual void reshape(int w, int h);
 	void add_view(std::shared_ptr<ui::view> v);
+	void remove_view(std::shared_ptr<ui::view> v);
+	void clear_views();
 
 private:
 	std::vector<std::shared_ptr<ui::view>> _views;

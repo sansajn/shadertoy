@@ -94,3 +94,8 @@ void shadertoy_program::update(float t, glm::vec2 const & resolution, int frame,
 	_frame = frame;
 	_mouse = mouse;
 }
+
+void shadertoy_program::free_textures()
+{
+	_textures.clear();
+}

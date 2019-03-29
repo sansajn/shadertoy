@@ -13,6 +13,7 @@ class texture_view : public view
 {
 public:
 	texture_view(glm::vec2 const & pos = glm::vec2{0,0}, glm::vec2 const & size = glm::vec2{0,0});
+	~texture_view();
 	void load(std::string const & fname);
 	void load(std::shared_ptr<gles2::texture2d> texture);
 	void render() override;

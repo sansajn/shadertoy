@@ -9,6 +9,7 @@ public:
 	float next();
 	float next(float step);
 	void resume();
+	void reset();
 
 private:
 	float _now;

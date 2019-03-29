@@ -140,7 +140,7 @@ void shadertoy_app::update(float dt)
 		cout << "t=" << t_prev << "s -> " << t << "s" << std::endl;
 	}
 
-	float const UPDATE_DELAY = 0.5f;
+	float const UPDATE_DELAY = 0.25f;
 
 	_fps_label_update.update(dt);
 
@@ -164,7 +164,7 @@ void shadertoy_app::update(float dt)
 			_time_label->position(vec2{width() - 100, 5});
 		}
 
-		_time_label_update = delayed_bool{false, true, UPDATE_DELAY};
+		_time_label_update = delayed_bool{false, true, UPDATE_DELAY/2.0f};
 	}
 }
 
@@ -228,6 +228,11 @@ void shadertoy_app::edit_program()
 
 bool shadertoy_app::load_program(string const & fname)
 {
+	for (auto const & v : _texture_panel)
+		remove_view(v);
+	_texture_panel.clear();
+	_textures.clear();
+
 	if (ends_with(fname, ".stoy"))  // project file
 	{
 		io::project_file prj;
@@ -251,6 +256,7 @@ bool shadertoy_app::load_program(string const & fname)
 	{
 		_program_fname = fname;
 
+		_prog.free_textures();
 		if (!_prog.load(_program_fname))
 			return false;
 	}
@@ -260,6 +266,8 @@ bool shadertoy_app::load_program(string const & fname)
 	name(fn.native());
 
 	cout << "program '" << _program_fname << "' loaded" << std::endl;
+
+	_t.reset();
 
 	return true;
 }
@@ -272,8 +280,5 @@ bool shadertoy_app::reload_program()
 void shadertoy_app::reshape(int w, int h)
 {
 	assert(w > 0 && h > 0 && "invalid screen geometry");
-	vec2 size{w, h};
-	_fps_label->reshape(size);
-	_time_label->reshape(size);
 	base::reshape(w, h);
 }

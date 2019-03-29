@@ -6,7 +6,7 @@ using std::ceil;
 universe_clock::universe_clock()
 	: _now{0.0f}
 {
-	_t0 = std::chrono::system_clock::now();
+	reset();
 }
 
 float universe_clock::now() const
@@ -34,4 +34,9 @@ void universe_clock::resume()
 		ceil(_now * 1000.0f))};
 
 	_t0 = std::chrono::system_clock::now() - offset;
+}
+
+void universe_clock::reset()
+{
+	_t0 = std::chrono::system_clock::now();
 }

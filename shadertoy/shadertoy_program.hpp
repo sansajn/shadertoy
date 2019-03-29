@@ -23,6 +23,8 @@ public:
 		glm::vec4 const & mouse
 	);
 
+	void free_textures();
+
 private:
 	gles2::shader::program _prog;
 	float_uniform _time;
