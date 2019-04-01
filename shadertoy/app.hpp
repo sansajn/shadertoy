@@ -5,10 +5,11 @@
 #include <glm/vec2.hpp>
 #include "gl/glfw3_window.hpp"
 #include "gles2/mesh_gles2.hpp"
-#include "gles2/label_gles2.hpp"
 #include "gles2/texture_gles2.hpp"
-#include "gles2/texture_view.hpp"
 #include "gles2/application.hpp"
+#include "gles2/ui/label_gles2.hpp"
+#include "gles2/ui/texture_view.hpp"
+#include "gles2/ui/text.hpp"
 #include "shadertoy_program.hpp"
 #include "clock.hpp"
 #include "delayed_value.hpp"
@@ -31,6 +32,9 @@ public:
 	bool reload_program();
 
 private:
+	bool load_shader_or_project(std::string const & fname);
+	void show_help();
+
 	std::chrono::system_clock::time_point _t0;
 	key_press_event _open_pressed, _edit_pressed, _reload_pressed,
 		_help_pressed, _pause_pressed, _next_pressed;
@@ -41,6 +45,7 @@ private:
 	mesh _quad;
 	shadertoy_program _prog;
 	std::shared_ptr<ui::label> _fps_label, _time_label;
+	std::shared_ptr<ui::text_view> _help_v;
 	std::vector<std::shared_ptr<ui::texture_view>> _texture_panel;
 	bool _paused;  // step mode
 	universe_clock _t;

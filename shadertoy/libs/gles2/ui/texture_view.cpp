@@ -2,7 +2,7 @@
 #include "gl/shapes.hpp"
 #include "gles2/mesh_gles2.hpp"
 #include "gles2/texture_loader_gles2.hpp"
-#include "resource_loader.hpp"
+#include "gles2/resource_loader.hpp"
 #include "texture_view.hpp"
 
 using std::shared_ptr;

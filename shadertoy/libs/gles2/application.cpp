@@ -18,12 +18,15 @@ application::~application()
 
 void application::add_view(shared_ptr<ui::view> v)
 {
+	assert(v);
 	_views.push_back(v);
 }
 
 void application::remove_view(std::shared_ptr<ui::view> v)
 {
-	_views.erase(find(begin(_views), end(_views), v));
+	auto it = find(begin(_views), end(_views), v);
+	if (it != end(_views))
+		_views.erase(it);
 }
 
 void application::clear_views()

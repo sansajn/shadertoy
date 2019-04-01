@@ -3,6 +3,7 @@
 #include <glm/vec2.hpp>
 #include "utility.hpp"
 #include "app.hpp"
+#include "help.hpp"
 
 using std::cout;
 using std::string;
@@ -30,15 +31,9 @@ int main(int argc, char * argv[])
 
 	// dump help
 	cout
-		<< "shadertoy [options][shader_program]\n"
+		<< help_use() << "\n"
 		<< "\n"
-		<< "{keys}\n"
-		<< "O: open shadertoy program or project file (*.stoy)\n"
-		<< "R: reload shader program\n"
-		<< "E: edit shader program\n"
-		<< "P: pause/play\n"
-		<< ".: next step\n"
-		<< "H: show this help\n"
+		<< help_keys() << "\n"
 		<< std::endl;
 
 	cout << desc << std::endl;

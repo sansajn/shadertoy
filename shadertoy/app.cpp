@@ -9,6 +9,7 @@
 #include "utility.hpp"
 #include "file_chooser_dialog.hpp"
 #include "project_file.hpp"
+#include "help.hpp"
 #include "app.hpp"
 
 using std::string;
@@ -53,7 +54,7 @@ label_holder<GlmT> with_label(std::string const & label, GlmT const & value)
 }
 
 shadertoy_app::shadertoy_app(ivec2 const & size, string const & shader_fname)
-	 : base{parameters{}.geometry(size[0], size[1])}
+	: base{parameters{}.geometry(size[0], size[1])}
 	, _next_pressed{10}
 	, _fps_label_update{true}
 	, _time_label_update{true}
@@ -63,28 +64,11 @@ shadertoy_app::shadertoy_app(ivec2 const & size, string const & shader_fname)
 
 	load_program(shader_fname);
 
-	_fps_label.reset(new ui::label);
-	_fps_label->init(locate_font(), 12, vec2{width(), height()}, vec2{2,2});
-
-	_time_label.reset(new ui::label);
-	_time_label->init(locate_font(), 12, vec2{width(), height()}, vec2{width() - 100, 5});
-
-	for (size_t i = 0; i < _textures.size(); ++i)
-	{
-		vec2 pos = vec2{width() - (i+1)*(64+10), height() - 64 - 10};
-		shared_ptr<ui::texture_view> tex{new ui::texture_view{pos, vec2{64, 64}}};
-		tex->reshape(vec2{width(), height()});
-		tex->load(_textures[i]);
-		_texture_panel.push_back(tex);
-	}
-
 	glClearColor(0,0,0,1);
 
 	cout << with_label("framebuffer-size", framebuffer_size()) << std::endl;
 //	print_vector(framebuffer_size());// << std::endl;
 
-	add_view(_fps_label);
-	add_view(_time_label);
 	for (auto const & v : _texture_panel)
 		add_view(v);
 }
@@ -146,8 +130,11 @@ void shadertoy_app::update(float dt)
 
 	if (_fps_label_update.get())
 	{
-		_fps_label->text(string("fps: ") + to_string(fps()));
-		_fps_label_update = delayed_bool{false, true, UPDATE_DELAY};
+		if (_fps_label)
+		{
+			_fps_label->text(string("fps: ") + to_string(fps()));
+			_fps_label_update = delayed_bool{false, true, UPDATE_DELAY};
+		}
 	}
 
 	_time_label_update.update(dt);
@@ -155,13 +142,19 @@ void shadertoy_app::update(float dt)
 	{
 		if (_paused)
 		{
-			_time_label->text("P (1/" + to_string(_step) + "), t=" + to_string(_t.now()) + "s");
-			_time_label->position(vec2{width() - 180, 2});
+			if (_time_label)
+			{
+				_time_label->text("P (1/" + to_string(_step) + "), t=" + to_string(_t.now()) + "s");
+				_time_label->position(vec2{width() - 180, 2});
+			}
 		}
 		else
 		{
-			_time_label->text("t=" + to_string(_t.now()) + "s");
-			_time_label->position(vec2{width() - 100, 5});
+			if (_time_label)
+			{
+				_time_label->text("t=" + to_string(_t.now()) + "s");
+				_time_label->position(vec2{width() - 100, 5});
+			}
 		}
 
 		_time_label_update = delayed_bool{false, true, UPDATE_DELAY/2.0f};
@@ -228,11 +221,55 @@ void shadertoy_app::edit_program()
 
 bool shadertoy_app::load_program(string const & fname)
 {
+	remove_view(_fps_label);
+	remove_view(_time_label);
+	remove_view(_help_v);
 	for (auto const & v : _texture_panel)
 		remove_view(v);
 	_texture_panel.clear();
 	_textures.clear();
 
+	if (load_shader_or_project(fname))
+	{
+		_fps_label.reset(new ui::label);
+		_fps_label->init(locate_font(), 12, vec2{width(), height()}, vec2{2,2});
+
+		_time_label.reset(new ui::label);
+		_time_label->init(locate_font(), 12, vec2{width(), height()}, vec2{width() - 100, 5});
+
+		add_view(_fps_label);
+		add_view(_time_label);
+
+		for (size_t i = 0; i < _textures.size(); ++i)
+		{
+			vec2 pos = vec2{width() - (i+1)*(64+10), height() - 64 - 10};
+			shared_ptr<ui::texture_view> tex{new ui::texture_view{pos, vec2{64, 64}}};
+			tex->reshape(vec2{width(), height()});
+			tex->load(_textures[i]);
+			_texture_panel.push_back(tex);
+		}
+	}
+	else
+		show_help();
+
+	_prog.use();
+	auto fn = fs::path{_program_fname}.filename();
+	name(fn.native());
+
+	cout << "program '" << _program_fname << "' loaded" << std::endl;
+
+	_t.reset();
+
+	return true;
+}
+
+bool shadertoy_app::reload_program()
+{
+	return load_program(_program_fname);
+}
+
+bool shadertoy_app::load_shader_or_project(std::string const & fname)
+{
 	if (ends_with(fname, ".stoy"))  // project file
 	{
 		io::project_file prj;
@@ -261,20 +298,15 @@ bool shadertoy_app::load_program(string const & fname)
 			return false;
 	}
 
-	_prog.use();
-	auto fn = fs::path{_program_fname}.filename();
-	name(fn.native());
-
-	cout << "program '" << _program_fname << "' loaded" << std::endl;
-
-	_t.reset();
-
 	return true;
 }
 
-bool shadertoy_app::reload_program()
+void shadertoy_app::show_help()
 {
-	return load_program(_program_fname);
+	_help_v.reset(new ui::text_view);
+	_help_v->init(locate_font(), 10, vec2{width(), height()}, vec2{2,2});
+	_help_v->text(help_use() + "\n\n" + help_keys());
+	add_view(_help_v);
 }
 
 void shadertoy_app::reshape(int w, int h)

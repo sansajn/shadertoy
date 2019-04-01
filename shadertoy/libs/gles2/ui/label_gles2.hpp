@@ -8,7 +8,7 @@
 #include FT_FREETYPE_H
 #include "gles2/program_gles2.hpp"
 #include "gles2/texture_gles2.hpp"
-#include "gles2/view.hpp"
+#include "gles2/ui/view.hpp"
 
 namespace ui {
 

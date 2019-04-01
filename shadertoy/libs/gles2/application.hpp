@@ -2,7 +2,7 @@
 #include <memory>
 #include <vector>
 #include "gl/glfw3_window.hpp"
-#include "gles2/view.hpp"
+#include "gles2/ui/view.hpp"
 
 namespace ui {
 
