@@ -66,9 +66,6 @@ shadertoy_app::shadertoy_app(ivec2 const & size, string const & shader_fname)
 
 	glClearColor(0,0,0,1);
 
-	cout << with_label("framebuffer-size", framebuffer_size()) << std::endl;
-//	print_vector(framebuffer_size());// << std::endl;
-
 	for (auto const & v : _texture_panel)
 		add_view(v);
 }
@@ -88,7 +85,7 @@ void shadertoy_app::update(float dt)
 	if (_edit_pressed)
 	{
 		cout << "edit '" << _program_fname << "' ..." << std::endl;
-		string cmd = "kate \"" + _program_fname + "\" &";
+		string cmd = "kate -n \"" + _program_fname + "\" &";
 		system(cmd.c_str());
 	}
 
@@ -248,15 +245,16 @@ bool shadertoy_app::load_program(string const & fname)
 			tex->load(_textures[i]);
 			_texture_panel.push_back(tex);
 		}
+
+		_prog.use();
+
+		cout << "program '" << _program_fname << "' loaded" << std::endl;
 	}
 	else
 		show_help();
 
-	_prog.use();
 	auto fn = fs::path{_program_fname}.filename();
 	name(fn.native());
-
-	cout << "program '" << _program_fname << "' loaded" << std::endl;
 
 	_t.reset();
 

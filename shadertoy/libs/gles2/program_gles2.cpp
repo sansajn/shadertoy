@@ -19,9 +19,8 @@ namespace gles2 {
 
 char const * LOG_TAG = "gles2::program";
 
-void dump_compile_log(GLuint shader, std::string const & name);
-void dump_link_log(GLuint program, std::string const & name);
-string to_string(module::shader_type type);
+static string get_compile_log(GLuint shader);
+static string get_link_log(GLuint program);
 
 program * program::_CURRENT = nullptr;
 
@@ -98,7 +97,7 @@ void program::link()
 	bool result = link_check();
 	assert(result && "program linking failed");
 	if (!result)
-		throw exception("unable to link a program");
+		throw exception{"unable to link a program", "<empty>"};
 }
 
 program::~program()
@@ -189,8 +188,10 @@ bool program::link_check()
 {
 	GLint linked;
 	glGetProgramiv(_pid, GL_LINK_STATUS, &linked);
+
 	if (linked == GL_FALSE)
-		dump_link_log(_pid, "<unspecified>");
+		throw exception{"program shader link failed", get_link_log(_pid)};
+
 	return linked != GL_FALSE;
 }
 
@@ -202,12 +203,12 @@ void gl_error_check()
 	switch (glGetError())
 	{
 		case GL_NO_ERROR: return;
-		case GL_INVALID_ENUM: throw exception{"glGetError(): invalid enum"};
-		case GL_INVALID_VALUE: throw exception{"glGetError(): invalid value"};
-		case GL_INVALID_OPERATION: throw exception{"glGetError(): invalid operation"};
-		case GL_INVALID_FRAMEBUFFER_OPERATION: throw exception{"glGetError(): invalid framebuffer operation"};
-		case GL_OUT_OF_MEMORY: throw exception{"glGetError(): out of memory"};
-		default: throw exception{"glGetError(): unknown error"};
+		case GL_INVALID_ENUM: throw exception{"glGetError(): invalid enum", "GL_INVALID_ENUM"};
+		case GL_INVALID_VALUE: throw exception{"glGetError(): invalid value", "GL_INVALID_VALUE"};
+		case GL_INVALID_OPERATION: throw exception{"glGetError(): invalid operation", "GL_INVALID_OPERATION"};
+		case GL_INVALID_FRAMEBUFFER_OPERATION: throw exception{"glGetError(): invalid framebuffer operation", "GL_INVALID_FRAMEBUFFER_OPERATION"};
+		case GL_OUT_OF_MEMORY: throw exception{"glGetError(): out of memory", "GL_OUT_OF_MEMORY"};
+		default: throw exception{"glGetError(): unknown error", "<empty>"};
 	}
 #endif
 }
@@ -241,7 +242,7 @@ void module::from_memory(string const & source, unsigned version)
 		compile(version, source, shader_type::fragment);
 
 	if (_ids[(int)shader_type::vertex] == 0 && _ids[(int)shader_type::fragment] == 0)
-		throw exception("empty shader module");
+		throw exception{"empty shader module"};
 }
 
 module::~module()
@@ -297,16 +298,11 @@ void module::compile(unsigned version, std::string const & code, shader_type typ
 
 void module::compile_check(unsigned sid, shader_type type)
 {
-	string name = _fname + string(":") + to_string(type);
-
 	GLint compiled;
 	glGetShaderiv(sid, GL_COMPILE_STATUS, &compiled);
 
-	if (compiled == GL_FALSE)  // TODO: zobrazit warningi ?
-	{
-		dump_compile_log(sid, name);
-		throw exception("program shader compilation failed");
-	}
+	if (compiled == GL_FALSE)
+		throw exception("program shader compilation failed", get_compile_log(sid));
 
 	assert(glGetError() == GL_NO_ERROR && "opengl error");
 }
@@ -317,24 +313,24 @@ void module::empty_ids()
 		id = 0;
 }
 
-void dump_compile_log(GLuint shader, std::string const & name)
+string get_compile_log(GLuint shader)
 {
 	GLint len;
 	glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &len);
-	std::string log;
+	string log;
 	log.resize(len);
 	glGetShaderInfoLog(shader, len, nullptr, (GLchar *)log.data());
-	std::cerr << "compile output ('" << name << "'):\n" << log << std::endl;
+	return log;
 }
 
-void dump_link_log(GLuint program, std::string const & name)
+string get_link_log(GLuint program)
 {
 	GLint len;
 	glGetProgramiv(program, GL_INFO_LOG_LENGTH, &len);
-	std::string log;
+	string log;
 	log.resize(len);
 	glGetProgramInfoLog(program, len, nullptr, (GLchar *)log.data());
-	std::cerr << "link output ('" << name << "'):\n" << log << std::endl;
+	return log;
 }
 
 string read_file(string const & fname)

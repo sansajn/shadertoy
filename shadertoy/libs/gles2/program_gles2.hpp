@@ -15,7 +15,11 @@ class program;
 
 struct exception : public std::runtime_error
 {
-	exception(std::string const & msg) : std::runtime_error(msg) {}
+	exception(std::string const & msg, std::string const & error_log = std::string{})
+		: std::runtime_error{msg}, error_log{error_log}
+	{}
+
+	std::string error_log;
 };
 
 /*! \note Ak je uniform vytvoreny pomocou prazdneho konstruktora, jeho pouzitie
@@ -101,6 +105,9 @@ private:
 	// debug
 	std::string _fname;
 };
+
+std::string to_string(module::shader_type type);
+
 
 class program
 {
