@@ -1,26 +1,57 @@
 # shadertoy
 
-Shadertoy program implementuje shadertoy.com fragment shader player (pre gles2 kompatiblilné programy), takže je možné púštať shadertoy shader programy bez nutnosti pripojenia na sieť. Shadertoy naviše umožnuje pozastaviť a následne krokovať simuláciu pomocou kláves `p` (pause) a `.` (next frame).
+[shadertoy.com](https://www.shadertoy.com, "shadertoy web page") fragment shader player pre *gles2* kompatibilné programy. Shadertoy umožuje pozastaviť a krokovať simuláciu pomocou kláves `p` (pause) a `.` (next frame) viz. sekcia ovládanie.
 
 ![](assets/shadertoy_primitives_shader.png)
 
-Ovládanie: `O` - open shader file, `R` - reload shader program, `E` - edit shader program, `P` - pause program, `.` - next frame a `H` - show help.
+**Ovládanie**: `O` - open shader file, `R` - reload shader program, `E` - edit shader program, `P` - pause program, `.` - next frame a `H` - show help.
 
 ## spustenie
 
-Shadertoy spustíme nasledujúcim spôsobom 
+Shadertoy spustíme príkazom
 
 ```
 shadertoy [SHADER_FILE]
 ```
 
-, kde `SHADER_FILE` je cesta k shadertoy.com kompatibilnému shader programu.
+, kde `SHADER_FILE` je cesta k [shadertoy.com](https://www.shadertoy.com, "shadertoy web page") kompatibilnému shader programu.
 
 
 ## kompilácia
 
 Skompilujeme príkazom
 
-	$ scons -j11
+```bash
+scons -j8
+```
 
-s adresára `shadertoy`.
+z adresára `shadertoy`.
+
+## ukážka
+
+Časovo premenlivý gradient pozadia
+
+![](assets/shadertoy_hello.png)
+
+
+```glsl
+// shadertoy hello shader
+void mainImage(out vec4 fragColor, in vec2 fragCoord)
+{
+   // Normalized pixel coordinates (from 0 to 1)
+   vec2 uv = fragCoord/iResolution.xy;
+
+   // Time varying pixel color
+   vec3 col = 0.5 + 0.5*cos(iTime+uv.xyx+vec3(0,2,4));
+
+   // Output to screen
+   fragColor = vec4(col,1.0);
+}
+```
+
+pozri `hello.glsl`.
+
+Pre ďalšie ukážky pozri `reflection.glsl`, `explosion.glsl`, alebo `primitives_samples.glsl` (obrázok z úvodu). 
+
+![reflection](assets/shadertoy_reflection.png) ![explosion](assets/shadertoy_explosion.png)
+
